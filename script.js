@@ -1,8 +1,20 @@
+const feedback = document.querySelector('.feedback')
+const squares = document.querySelectorAll('.square')
+
 const gameBoard = (function() {
     let gameArray = [[],[],[]];
     
     const placeToken = (token, x, y) => {
-        gameArray[x][y] = token;
+        if (gameArray[x][y] === undefined) {
+            gameArray[x][y] = token;
+
+            const squareId = '#s' + x.toString() + y.toString()
+            const square = document.querySelector(squareId)
+            square.textContent = token;
+        }
+        else {
+            feedback.textContent = `${gameArray[x][y]} is already occupying that spot!`
+        }
     }
 
     const resetBoard = () => {
@@ -103,7 +115,7 @@ const tokenTwo = prompt("Please Enter Player 2's Token", "O")
 p1 = createPlayer(tokenOne, playerOne)
 p2 = createPlayer(tokenTwo, playerTwo)
 
-console.log(`Game will be player with ${p1.name} as ${p1.token} and ${p2.name} as ${p2.token}. Player 1 to start.`)
+feedback.textContent = `Game will be played with ${p1.name} as ${p1.token} and ${p2.name} as ${p2.token}. ${p1.name} to start.`
 
 gameController.gameOn();
 let winner = null;
@@ -113,14 +125,16 @@ console.log(gameController.getGameState())
 while (gameController.getGameState()) {
     const moveOneX = parseInt(prompt(`${p1.name}, enter x coordinate:`));
     const moveOneY = parseInt(prompt(`${p1.name}, enter y coordinate:`));
-    winner = gameController.playerMove(p1, moveOneX, moveOneY);
+    winner = gameController.playerMove(p1.token, moveOneX, moveOneY);
     if (!gameController.getGameState()) {
         break
     }
     const moveTwoX = parseInt(prompt(`${p2.name}, enter x coordinate:`));
     const moveTwoY = parseInt(prompt(`${p2.name}, enter y coordinate:`));
-    winner = gameController.playerMove(p2, moveTwoX, moveTwoY);
+    winner = gameController.playerMove(p2.token, moveTwoX, moveTwoY);
 }
+
+console.log(winner)
 
 if (winner) {
     if (winner === 'tie') {
